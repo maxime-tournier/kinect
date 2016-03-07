@@ -22,7 +22,7 @@ while True:
     for user in frame.users:
         print 'user:', user.id,
 
-        if user.skeleton.state == SkeletonState.NITE_SKELETON_TRACKED:
+        if user.skeleton.state == SkeletonState.NITE_SKELETON_CALIBRATING:
             print 'calibrating'
         elif user.skeleton.state == SkeletonState.NITE_SKELETON_TRACKED:
             print 'tracked'
@@ -50,8 +50,8 @@ while True:
 
                     # god knows what this does
                     if j.positionConfidence > 0.5:
-                        pass
-                        # print j.jointType, j.position
+                        # pass
+                        print j.jointType, j.position
 
         pose = user.get_pose(pose_type)
 

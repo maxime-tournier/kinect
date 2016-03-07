@@ -1,4 +1,8 @@
 /NiTE2
 /libNiTE2.dylib
+/libNiTE2.so
 *~
 *.pyc
+/OpenNI2
+/libOpenNI2.dylib
+/libOpenNI2.so
