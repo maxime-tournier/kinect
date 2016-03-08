@@ -34,10 +34,7 @@ def source():
 
 
 
-
-
 import socket
-
 
 TCP_IP = '127.0.0.1'
 TCP_PORT = 6969
@@ -52,24 +49,11 @@ while True:
     conn, addr = s.accept()
     print 'connection from:', addr
 
-    def loop(users):
-        frame = {}
-
-        for i, u in users.iteritems():
-            frame[ i ] = {}
-
-            for t, j in kinect.joints(u):
-                name = table[kinect.JointType._values_[t.value]]
-                data = [j.x, j.y, j.z]
-                frame[ i ][name] = data
-
-        data = json.dumps(frame)
-        conn.send( data)
-
     try:
-        kinect.loop( loop )
+        for data in source():
+            conn.send( data + '\n' )
+            
     except socket.error, msg:
         print 'client error:', msg
-        # conn.close()
     finally:
         conn.close()

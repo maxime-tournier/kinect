@@ -15,14 +15,25 @@ nite2.initialize()
 
 tracker = nite2.UserTracker(None)
 
+# fixes memleak
+from contextlib import contextmanager            
+@contextmanager            
+def read_frame():
+    try:
+        frame = tracker.read_frame()
+        yield frame
+    finally:
+        nite2.c_api.niteUserTrackerFrameRelease(frame._user_tracker_handle,
+                                                frame._handle)
+
 def frames():
     while True:
-        yield tracker.read_frame()
+        with read_frame() as f:
+            yield f
 
 
 def tracked(pose_type = None):
-    tracker = nite2.UserTracker(None)
-    for f in frames(tracker):
+    for f in frames():
         res = {}
         
         for user in f.users:
@@ -43,18 +54,3 @@ def joints(user):
             yield j.jointType, j.position
 
 
-def loop(cb, pose_type = None):
-    while True:
-        f = tracker.read_frame()
-        res = {}
-
-        for user in f.users:
-            if user.is_new():
-                tracker.start_skeleton_tracking(user.id)
-                if pose_type: tracker.start_pose_detection(user.id, pose_type)
-            elif not user.is_lost():
-                if user.skeleton.state == SkeletonState.NITE_SKELETON_TRACKED:
-                    res[user.id] = user
-
-        cb(res)
-            
